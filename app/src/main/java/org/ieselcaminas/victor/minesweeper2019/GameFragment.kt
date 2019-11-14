@@ -1,10 +1,7 @@
 package org.ieselcaminas.victor.minesweeper2019
 
-
-import android.graphics.drawable.Drawable
-import android.opengl.ETC1.isValid
-import android.opengl.Visibility
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -39,7 +36,7 @@ class GameFragment : Fragment() {
             it.findNavController().navigate(GameFragmentDirections.actionGameFragmentToLoseFragment())
         }
 
-        var args = GameFragmentArgs.fromBundle(arguments!!)
+        val args = GameFragmentArgs.fromBundle(arguments!!)
         numRows = args.numRows
         numCols = args.numCols
         bombMatrix = BombMatrix(numRows, numCols, (numRows * numCols) / 6)
@@ -82,8 +79,8 @@ class GameFragment : Fragment() {
         }
     }
 
-    private fun gameOverChecker(row: Int, col: Int) {
-        if (bombMatrix.board[row][col] == bombMatrix.BOMB_NUMBER) {
+    private fun gameOverChecker(inRow: Int, inCol: Int) {
+        if (bombMatrix.board[inRow][inCol] == bombMatrix.BOMB_NUMBER) {
             for (row in 0..numRows-1) {
                 for (col in 0..numCols-1) {
                     if (bombMatrix.board[row][col] == bombMatrix.BOMB_NUMBER) {
@@ -97,10 +94,10 @@ class GameFragment : Fragment() {
     }
 
     private fun putsBackgroundAndButton(row: Int, col: Int) {
-        var layout = FrameLayout(context!!)
+        val layout = FrameLayout(context!!)
         layout.layoutParams = FrameLayout.LayoutParams(75, 75)
 
-        var imgBackground = ImageView(context!!)
+        val imgBackground = ImageView(context!!)
         imgBackground.setImageResource(setImgNumber(row, col))
 
         layout.addView(imgBackground)
