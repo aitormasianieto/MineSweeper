@@ -1,15 +1,19 @@
 package org.ieselcaminas.victor.minesweeper2019
 
 
+import android.graphics.drawable.Drawable
+import android.opengl.ETC1.isValid
+import android.opengl.Visibility
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.findNavController
-import kotlinx.android.synthetic.main.fragment_game.*
 import org.ieselcaminas.victor.minesweeper2019.databinding.FragmentGameBinding
 
 /**
@@ -19,17 +23,13 @@ class GameFragment : Fragment() {
 
     lateinit var binding: FragmentGameBinding
     lateinit var board: Array<Array<MineButton>>
+    lateinit var bombMatrix: BombMatrix
     var numRows: Int = 0
     var numCols: Int = 0
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView( inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        binding = DataBindingUtil.inflate(
-            inflater, R.layout.fragment_game, container,
-            false)
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_game, container, false)
 
         binding.buttonWin.setOnClickListener() {
             it.findNavController().navigate(GameFragmentDirections.actionGameFragmentToWonFragment())
@@ -42,8 +42,8 @@ class GameFragment : Fragment() {
         var args = GameFragmentArgs.fromBundle(arguments!!)
         numRows = args.numRows
         numCols = args.numCols
-        Toast.makeText(context, "Rows = $numRows Cols = $numCols",
-            Toast.LENGTH_LONG).show()
+        bombMatrix = BombMatrix(numRows, numCols, (numRows * numCols) / 6)
+        Toast.makeText(context, "Rows = $numRows Cols = $numCols", Toast.LENGTH_LONG).show()
 
         createButtons()
 
@@ -53,31 +53,107 @@ class GameFragment : Fragment() {
 
     private fun createButtons() {
         board = Array(numRows) { row ->
-                Array(numCols) { col ->
+            Array(numCols) { col ->
                 MineButton(context!!, row, col)
             }
         }
+        //EL GRID LAYOUT TE AÑADE LOS BOTONES EN VERTICAL EN VEZ DE EN HORIZONTAL
         binding.gridLayout.columnCount = numCols
         binding.gridLayout.rowCount = numRows
-        for (row in 0..numRows-1) {
-            for (col in 0..numCols-1) {
-                binding.gridLayout.addView(board[row][col])
-                board[row][col].setOnClickListener() {
-                    println("row: ${board[row][col].row} col: ${board[row][col].col}")
+
+        for (col in 0..numCols-1) { //ENTONCES QUEREMOS QUE VAYAN AVANZANDO LAS ROWS DENTRO DE CADA UNA DE LAS COLS
+            for (row in 0..numRows-1) {
+                putsBackgroundAndButton(row, col)
+
+                board[row][col].setOnClickListener() { it as MineButton
+
+                    //watch row, col and result
+                    println("row: ${it.row} col: ${it.col}" + "   " + bombMatrix.board[it.row][it.col])
+
+                    it.state = StateType.OPEN
+                    it.visibility = View.INVISIBLE
+
+                    gameOverChecker(it.row, it.col)
+
+                    //Abertura en caso de 0's
+                    zeroOpener(it.row, it.col)
                 }
             }
         }
-        /* for (line in board) {
-            for (button in line) {
-                binding.gridLayout.addView(button)
-                button.setOnClickListener() {
-                    println("row: ${button.row} col: ${button.col}")
-                }
-            }
-        } */
-
-
     }
 
+    private fun gameOverChecker(row: Int, col: Int) {
+        if (bombMatrix.board[row][col] == bombMatrix.BOMB_NUMBER) {
+            for (row in 0..numRows-1) {
+                for (col in 0..numCols-1) {
+                    if (bombMatrix.board[row][col] == bombMatrix.BOMB_NUMBER) {
+                        board[row][col].visibility = View.INVISIBLE
+                        board[row][col].state = StateType.OPEN
+                    }
+                    Log.i("GameFragment", "Game Over")
+                }
+            }
+        }
+    }
 
+    private fun putsBackgroundAndButton(row: Int, col: Int) {
+        var layout = FrameLayout(context!!)
+        layout.layoutParams = FrameLayout.LayoutParams(75, 75)
+
+        var imgBackground = ImageView(context!!)
+        imgBackground.setImageResource(setImgNumber(row, col))
+
+        layout.addView(imgBackground)
+        layout.addView(board[row][col])
+
+        binding.gridLayout.addView(layout)
+    }
+
+    private fun setImgNumber(row: Int, col:Int): Int {
+
+        return when (bombMatrix.board[row][col]) {
+            0 ->
+                R.drawable.n0
+            1 ->
+                R.drawable.n1
+            2 ->
+                R.drawable.n2
+            3 ->
+                R.drawable.n3
+            4 ->
+                R.drawable.n4
+            5 ->
+                R.drawable.n5
+            6 ->
+                R.drawable.n6
+            7 ->
+                R.drawable.n7
+            8 ->
+                R.drawable.n8
+            9 ->
+                R.drawable.bomb
+            else ->
+                R.drawable.boton
+        }
+    }
+
+    private fun zeroOpener(nRow: Int, nCol: Int) {
+        if (bombMatrix.board[nRow][nCol] == 0) {
+            for (row in nRow - 1..nRow + 1) {
+                for (col in nCol - 1..nCol + 1) {
+                    if (bombMatrix.isValid(row, col)) {
+                        if (!(nRow == row && nCol == col)) {
+                            if (board[row][col].state == StateType.CLOSED) {
+
+                                board[row][col].state = StateType.OPEN
+                                board[row][col].visibility = View.INVISIBLE
+
+                                zeroOpener(row, col)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

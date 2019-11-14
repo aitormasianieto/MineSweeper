@@ -22,19 +22,16 @@ class ConfigFragment : Fragment() {
 
     var configData = ConfigData(10,10)
     lateinit var binding: FragmentConfigBinding
-    var x: String = "hello";
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
 
-        binding = DataBindingUtil.inflate(inflater,
-            R.layout.fragment_config,
-            container, false)
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_config, container, false)
         binding.buttonPlay.setOnClickListener() {
             //Navigation.findNavController(it).navigate(R.id.action_configFragment_to_gameFragment)
-            it.findNavController().navigate(ConfigFragmentDirections.actionConfigFragmentToGameFragment(configData.numCols,configData.numRows))
+            it.findNavController().navigate(ConfigFragmentDirections.actionConfigFragmentToGameFragment(configData.numRows,configData.numCols))
         }
         binding.editTextCols.addTextChangedListener() {
             try {
