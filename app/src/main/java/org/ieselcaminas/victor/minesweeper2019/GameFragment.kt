@@ -84,6 +84,8 @@ class GameFragment : Fragment() {
             for (row in 0..numRows-1) {
                 for (col in 0..numCols-1) {
                     if (bombMatrix.board[row][col] == bombMatrix.BOMB_NUMBER) {
+                        if (board[row][col].state == StateType.FLAG)
+
                         board[row][col].visibility = View.INVISIBLE
                         board[row][col].state = StateType.OPEN
                     }
