@@ -8,27 +8,51 @@
         android:orientation="vertical">
 
         <!-- TODO: Update blank fragment layout -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="GAME FRAGMENT"
-            android:textSize="50sp" />
 
-        <Button
-            android:id="@+id/buttonWin"
+        <LinearLayout
+            android:id="@+id/flags_linearLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/you_win" />
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="40dp"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/buttonLose"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/you_lose" />
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Flags:  "
+                android:textColor="#3D3D3D"
+                android:textSize="24sp" />
+
+            <TextView
+                android:id="@+id/flags_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:textSize="24sp" />
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="25dp"
+                android:text="Timer: "
+                android:textColor="#3D3D3D"
+                android:textSize="24sp" />
+
+            <TextView
+                android:id="@+id/timer_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:textSize="24sp" />
+        </LinearLayout>
 
         <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
 
             <FrameLayout
                 android:layout_width="match_parent"
@@ -47,6 +71,15 @@
                 </HorizontalScrollView>
             </FrameLayout>
         </ScrollView>
+
+        <TextView
+            android:id="@+id/result_textView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:textAlignment="center"
+            android:textSize="36sp"
+            android:visibility="invisible" />
 
     </LinearLayout>
 </layout>
